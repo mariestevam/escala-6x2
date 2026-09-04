@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Escala 6x2 - Calendário de Folgas | Mariana Martins</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(71, 85, 105, 1);
+        }
+        .phone-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 8px #1e293b;
+        }
+        select option {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-bg { background: white !important; border: 1px solid #ccc !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-2 sm:p-4 md:p-6">
+
+    <header class="w-full max-w-6xl mb-3 sm:mb-4 flex flex-col md:flex-row justify-between items-center gap-3 bg-slate-800/90 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-slate-700/80 shadow-xl no-print">
+        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-blue-600 to-indigo-500 text-white p-2.5 sm:p-3 rounded-xl shadow-lg shadow-blue-500/20 shrink-0">
+                    <i class="fa-solid fa-calendar-days text-lg sm:text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-xl font-extrabold text-white leading-tight flex items-center gap-2 flex-wrap">
+                        Escala 6x2 <span class="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">Calendário de Folgas</span>
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-slate-300 font-medium mt-0.5">
+                        Desenvolvido por <span class="text-blue-400 font-bold">Mariana Martins</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl flex-1 flex flex-col justify-start items-center my-auto">
+        
+        <!-- VIEW: CALENDAR VIEW (PC & MOBILE RESPONSIVE) -->
+        <div id="viewCalendar" class="w-full bg-slate-800/80 border border-slate-700 rounded-2xl p-2.5 sm:p-5 shadow-2xl text-slate-100 flex flex-col gap-3 sm:gap-5">
+            
+            <!-- Mobile & Desktop Filter Bar Controls (Month, Year, Letra) -->
+            <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700/70 flex flex-col gap-3">
+                
+                <!-- Row 1: Mês, Ano and Month Navigation -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+                    
+                    <!-- Month & Year Selectors -->
+                    <div class="sm:col-span-7 md:col-span-6 grid grid-cols-2 gap-2">
+                        <div class="flex flex-col gap-1">
+                            <label for="selectMonth" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                <i class="fa-solid fa-calendar text-blue-400"></i> Mês:
+                            </label>
+                            <select id="selectMonth" onchange="onCalendarFilterChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs sm:text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer h-10">
+                                <option value="0">Janeiro</option>
+                                <option value="1">Fevereiro</option>
+                                <option value="2">Março</option>
+                                <option value="3">Abril</option>
+                                <option value="4">Maio</option>
+                                <option value="5">Junho</option>
+                                <option value="6">Julho</option>
+                                <option value="7">Agosto</option>
+                                <option value="8">Setembro</option>
+                                <option value="9">Outubro</option>
+                                <option value="10">Novembro</option>
+                                <option value="11">Dezembro</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label for="selectYear" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                <i class="fa-solid fa-clock text-blue-400"></i> Ano:
+                            </label>
+                            <select id="selectYear" onchange="onCalendarFilterChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs sm:text-sm font-bold text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer h-10">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Letra / Turma Selector -->
+                    <div class="sm:col-span-5 md:col-span-6 flex flex-col gap-1">
+                        <label for="selectLetraCalendar" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                            <i class="fa-solid fa-users text-amber-400"></i> Turma / Letra:
+                        </label>
+                        <select id="selectLetraCalendar" onchange="renderCalendar()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs sm:text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer h-10">
+                            <option value="TODAS">🌟 Todas as Turmas Juntas</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Row 2: Month Navigation Shortcuts & Options -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
+                    <div class="flex items-center gap-1.5 w-full sm:w-auto justify-between sm:justify-start">
+                        <button onclick="changeMonth(-1)" aria-label="Mês anterior" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-200 transition-all flex items-center gap-1.5 active:scale-95">
+                            <i class="fa-solid fa-chevron-left text-xs"></i> <span>Anterior</span>
+                        </button>
+                        
+                        <button onclick="goToToday()" class="px-3 py-1.5 bg-blue-600/30 border border-blue-500/50 hover:bg-blue-600/50 text-blue-300 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Hoje
+                        </button>
+
+                        <button onclick="changeMonth(1)" aria-label="Próximo mês" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-200 transition-all flex items-center gap-1.5 active:scale-95">
+                            <span>Próximo</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Highlight Weekend Breaks Checkbox -->
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-700/80 hover:bg-slate-800 transition-all w-full sm:w-auto justify-center">
+                        <input type="checkbox" id="chkHighlightWeekends" onchange="renderCalendar()" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                        <span class="text-[11px] sm:text-xs">Destacar Folga Sáb/Dom</span>
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- Stats Bar -->
+            <div id="calendarStatsRow" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div class="bg-blue-900/30 border border-blue-700/40 rounded-xl p-2 sm:p-3 flex flex-col justify-center">
+                    <span class="text-[9px] sm:text-[10px] font-bold text-blue-400 uppercase">Folgas no Mês</span>
+                    <span id="statCalTotalFolgas" class="text-base sm:text-xl font-extrabold text-blue-100">--</span>
+                </div>
+                <div class="bg-emerald-900/30 border border-emerald-700/40 rounded-xl p-2 sm:p-3 flex flex-col justify-center">
+                    <span class="text-[9px] sm:text-[10px] font-bold text-emerald-400 uppercase">Folgas Sáb / Dom</span>
+                    <span id="statCalFolgasFimSemana" class="text-base sm:text-xl font-extrabold text-emerald-100">--</span>
+                </div>
+                <div class="bg-amber-900/30 border border-amber-700/40 rounded-xl p-2 sm:p-3 flex flex-col justify-center">
+                    <span class="text-[9px] sm:text-[10px] font-bold text-amber-400 uppercase">Próxima Dupla</span>
+                    <span id="statCalProximaFolga" class="text-xs sm:text-sm font-bold text-amber-100 truncate">--</span>
+                </div>
+                <div class="bg-slate-900/50 border border-slate-700/60 rounded-xl p-2 sm:p-3 flex flex-col justify-center">
+                    <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Turma Exibida</span>
+                    <span id="statCalTurmaNome" class="text-xs sm:text-sm font-bold text-white truncate">--</span>
+                </div>
+            </div>
+
+            <!-- Calendar Days Container -->
+            <div>
+                <!-- Days of week headers -->
+                <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-1.5 text-center text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                    <div class="text-red-400">Dom</div>
+                    <div>Seg</div>
+                    <div>Ter</div>
+                    <div>Qua</div>
+                    <div>Qui</div>
+                    <div>Sex</div>
+                    <div class="text-emerald-400">Sáb</div>
+                </div>
+
+                <!-- Calendar Days Grid -->
+                <div id="calendarDaysGrid" class="grid grid-cols-7 gap-1 sm:gap-2">
+                    <!-- Dynamic Days -->
+                </div>
+            </div>
+
+            <!-- Calendar Footer Legend -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-2 border-t border-slate-700/80 text-xs text-slate-400">
+                <div class="flex items-center gap-2.5 sm:gap-4 flex-wrap text-[10px] sm:text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-[#0044AA] inline-block border border-blue-400"></span>
+                        <span class="font-medium text-slate-200">Dia de Folga (🎉)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-slate-900 inline-block border border-slate-700"></span>
+                        <span>Trabalho (💼)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>
+                        <span>Folga no Fim de Semana (⭐️)</span>
+                    </div>
+                </div>
+                <div class="text-slate-400 text-[10px] sm:text-[11px]">
+                    * Toque em qualquer dia para ver detalhes completos.
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- DAY DETAILS MODAL -->
+    <div id="dayDetailsModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex justify-center items-center p-3 sm:p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 sm:p-6 max-w-md w-full shadow-2xl text-slate-100 relative animate-in fade-in zoom-in duration-150">
+            <button onclick="closeDayModal()" aria-label="Fechar" class="absolute top-3.5 right-3.5 text-slate-400 hover:text-white p-1">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="mb-3">
+                <span id="modalDateFormatted" class="text-[11px] font-extrabold text-blue-400 uppercase tracking-wider block">Data</span>
+                <h3 id="modalDayTitle" class="text-base sm:text-lg font-bold text-white mt-0.5">Situação das Turmas</h3>
+            </div>
+            
+            <div id="modalTurmasList" class="space-y-2 max-h-[55vh] overflow-y-auto custom-scrollbar pr-1">
+                <!-- Dynamic Content -->
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-700 flex justify-between items-center">
+                <span class="text-[10px] sm:text-[11px] text-slate-400">Mariana Martins - Escala 6x2</span>
+                <button onclick="closeDayModal()" class="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-bold text-white transition-all">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let baseEscala = [
+            { id: 1, letra: "Letra A", dataBase: "2026-08-07", color: "#3b82f6" }, // Folga 07 e 08 de Agosto
+            { id: 2, letra: "Letra B", dataBase: "2026-08-01", color: "#10b981" }, // Folga 01 e 02 / 09 e 10
+            { id: 3, letra: "Letra C", dataBase: "2026-08-03", color: "#f59e0b" }, // Folga 03 e 04 / 11 e 12
+            { id: 4, letra: "Letra D", dataBase: "2026-08-05", color: "#ec4899" }  // Folga 05 e 06 / 13 e 14
+        ];
+
+        let currentCalendarDate = new Date();
+
+        window.onload = function() {
+            initYearDropdowns();
+            populateLetraDropdowns();
+            
+            // Set default month for PC and Mobile responsive calendar
+            const now = new Date();
+            document.getElementById('selectMonth').value = now.getMonth();
+            
+            renderCalendar();
+        };
+
+        function initYearDropdowns() {
+            const selectYear = document.getElementById('selectYear');
+            selectYear.innerHTML = '';
+
+            const currentYr = new Date().getFullYear();
+            for (let y = currentYr - 2; y <= currentYr + 5; y++) {
+                const opt1 = document.createElement('option');
+                opt1.value = y;
+                opt1.textContent = y;
+                if (y === currentYr) opt1.selected = true;
+                selectYear.appendChild(opt1);
+            }
+        }
+
+        function populateLetraDropdowns() {
+            const selectCal = document.getElementById('selectLetraCalendar');
+            const selectedCalVal = selectCal.value;
+
+            selectCal.innerHTML = '<option value="TODAS">🌟 Todas as Turmas Juntas</option>';
+
+            baseEscala.forEach(item => {
+                const opt2 = document.createElement('option');
+                opt2.value = item.letra;
+                opt2.textContent = item.letra;
+                selectCal.appendChild(opt2);
+            });
+
+            if (selectedCalVal && (selectedCalVal === 'TODAS' || baseEscala.some(i => i.letra === selectedCalVal))) {
+                selectCal.value = selectedCalVal;
+            }
+        }
+
+        // 6x2 Modular Math Engine matching Power Apps DateDiff and Mod formulas
+        function calculateStatus(targetDateStr, dataBaseStr) {
+            const targetDate = new Date(targetDateStr + "T00:00:00");
+            const dataBase = new Date(dataBaseStr + "T00:00:00");
+
+            const diffTime = targetDate.getTime() - dataBase.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
+
+            // Power Apps Formula: Mod(Mod(DiffDias, 8) + 8, 8)
+            const posicaoCiclo = ((diffDays % 8) + 8) % 8;
+
+            const isFolga = (posicaoCiclo === 0 || posicaoCiclo === 1);
+            return {
+                isFolga: isFolga,
+                statusText: isFolga ? "FOLGA 🎉" : "Trabalho 💼",
+                posicaoCiclo: posicaoCiclo,
+                diaCicloText: isFolga ? `Folga (${posicaoCiclo + 1}/2)` : `Trabalho (${posicaoCiclo - 1}/6)`
+            };
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendarDaysGrid');
+            const selectedLetra = document.getElementById('selectLetraCalendar').value;
+            const highlightWeekends = document.getElementById('chkHighlightWeekends').checked;
+
+            grid.innerHTML = '';
+
+            const year = parseInt(document.getElementById('selectYear').value);
+            const month = parseInt(document.getElementById('selectMonth').value);
+
+            currentCalendarDate.setFullYear(year);
+            currentCalendarDate.setMonth(month);
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let totalFolgasNoMes = 0;
+            let totalFolgasFimSemana = 0;
+            let proximaFolgaText = null;
+
+            const todayStr = new Date().toISOString().slice(0, 10);
+
+            // Empty slots before month start
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.insertAdjacentHTML('beforeend', `<div class="min-h-[58px] sm:min-h-[85px] bg-slate-900/30 rounded-xl border border-slate-800/40"></div>`);
+            }
+
+            // Fill actual month days
+            for (let day = 1; day <= totalDaysInMonth; day++) {
+                const dayStr = String(day).padStart(2, '0');
+                const monthStr = String(month + 1).padStart(2, '0');
+                const fullDateStr = `${year}-${monthStr}-${dayStr}`;
+
+                const dateObj = new Date(fullDateStr + "T00:00:00");
+                const dayOfWeek = dateObj.getDay(); // 0 = Dom, 6 = Sáb
+                const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+                const isToday = (todayStr === fullDateStr);
+
+                let dayCardContent = '';
+
+                if (selectedLetra === 'TODAS') {
+                    // Multi-turma view
+                    let turmasFolga = [];
+                    baseEscala.forEach(turma => {
+                        const res = calculateStatus(fullDateStr, turma.dataBase);
+                        if (res.isFolga) {
+                            turmasFolga.push(turma);
+                        }
+                    });
+
+                    dayCardContent = `
+                        <div onclick="openDayModal('${fullDateStr}')" class="min-h-[58px] sm:min-h-[85px] bg-slate-900 text-slate-200 rounded-xl p-1 sm:p-2 border border-slate-700/80 hover:border-blue-500 cursor-pointer transition-all flex flex-col justify-between ${isToday ? 'ring-2 ring-blue-400 bg-slate-800' : ''}">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] sm:text-xs font-bold ${isWeekend ? 'text-amber-400' : 'text-slate-300'} ${isToday ? 'bg-blue-600 text-white px-1 rounded' : ''}">${day}</span>
+                                ${isToday ? '<span class="text-[8px] font-extrabold text-blue-300 uppercase hidden sm:inline">Hoje</span>' : ''}
+                            </div>
+                            <div class="mt-0.5 space-y-0.5 sm:space-y-1">
+                                ${turmasFolga.length > 0 
+                                    ? turmasFolga.map(t => `<div class="text-[8px] sm:text-[10px] font-bold px-1 py-0.5 rounded text-white truncate flex items-center gap-0.5" style="background-color: ${t.color}">
+                                        <span class="hidden sm:inline">🎉</span> <span>${t.letra}</span>
+                                      </div>`).join('') 
+                                    : '<span class="text-[8px] text-slate-500 italic block text-center">--</span>'
+                                }
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Single Turma view
+                    const itemBase = baseEscala.find(i => i.letra === selectedLetra);
+                    if (!itemBase) return;
+
+                    const result = calculateStatus(fullDateStr, itemBase.dataBase);
+
+                    if (result.isFolga) {
+                        totalFolgasNoMes++;
+                        if (isWeekend) totalFolgasFimSemana++;
+
+                        if (!proximaFolgaText && fullDateStr >= todayStr) {
+                            proximaFolgaText = `${dayStr}/${monthStr}`;
+                        }
+                    }
+
+                    const isWeekendFolga = result.isFolga && isWeekend && highlightWeekends;
+
+                    let bgStyle = "bg-slate-900 text-slate-300 border-slate-800";
+                    let badgeStyle = "bg-slate-800 text-slate-400";
+
+                    if (isWeekendFolga) {
+                        bgStyle = "bg-gradient-to-br from-amber-600 to-amber-700 text-white border-amber-400 shadow-md";
+                        badgeStyle = "bg-amber-300 text-slate-950 font-extrabold";
+                    } else if (result.isFolga) {
+                        bgStyle = "bg-[#0044AA] text-white border-blue-400 shadow-md";
+                        badgeStyle = "bg-blue-200 text-blue-950 font-extrabold";
+                    }
+
+                    dayCardContent = `
+                        <div onclick="openDayModal('${fullDateStr}')" class="min-h-[58px] sm:min-h-[85px] ${bgStyle} rounded-xl p-1 sm:p-2 border flex flex-col justify-between hover:scale-[1.02] cursor-pointer transition-all ${isToday ? 'ring-2 ring-white shadow-xl' : ''}">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] sm:text-xs font-bold ${isToday ? 'bg-white text-blue-900 px-1 rounded' : ''}">${day}</span>
+                                ${isWeekendFolga ? '<i class="fa-solid fa-star text-amber-200 text-[9px] sm:text-xs"></i>' : ''}
+                            </div>
+                            <div class="mt-auto">
+                                <span class="text-[7px] sm:text-[9px] font-bold px-0.5 sm:px-1 py-0.5 rounded ${badgeStyle} block text-center truncate">
+                                    ${result.isFolga ? (isWeekendFolga ? 'SÁB/DOM' : 'FOLGA 🎉') : 'Trabalho'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                grid.insertAdjacentHTML('beforeend', dayCardContent);
+            }
+
+            // Update stats
+            if (selectedLetra === 'TODAS') {
+                document.getElementById('statCalTotalFolgas').textContent = "Todas Turmas";
+                document.getElementById('statCalFolgasFimSemana').textContent = "Multi-visão";
+                document.getElementById('statCalProximaFolga').textContent = "Selecione turma";
+                document.getElementById('statCalTurmaNome').textContent = "Todas as Turmas";
+            } else {
+                document.getElementById('statCalTotalFolgas').textContent = `${totalFolgasNoMes} dias`;
+                document.getElementById('statCalFolgasFimSemana').textContent = `${totalFolgasFimSemana} dias`;
+                document.getElementById('statCalProximaFolga').textContent = proximaFolgaText || "Concluída";
+                document.getElementById('statCalTurmaNome').textContent = selectedLetra;
+            }
+        }
+
+        function onCalendarFilterChange() {
+            renderCalendar();
+        }
+
+        function changeMonth(delta) {
+            let month = parseInt(document.getElementById('selectMonth').value) + delta;
+            let year = parseInt(document.getElementById('selectYear').value);
+
+            if (month < 0) {
+                month = 11;
+                year--;
+            } else if (month > 11) {
+                month = 0;
+                year++;
+            }
+
+            document.getElementById('selectMonth').value = month;
+            document.getElementById('selectYear').value = year;
+
+            renderCalendar();
+        }
+
+        function goToToday() {
+            const today = new Date();
+            document.getElementById('selectMonth').value = today.getMonth();
+            document.getElementById('selectYear').value = today.getFullYear();
+            renderCalendar();
+        }
+
+        function openDayModal(dateStr) {
+            const dateObj = new Date(dateStr + "T00:00:00");
+            const dateFormatted = dateObj.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            document.getElementById('modalDateFormatted').textContent = dateFormatted.toUpperCase();
+            document.getElementById('modalDayTitle').textContent = `Situação das Turmas`;
+
+            const list = document.getElementById('modalTurmasList');
+            list.innerHTML = '';
+
+            baseEscala.forEach(turma => {
+                const res = calculateStatus(dateStr, turma.dataBase);
+                const bgClass = res.isFolga ? 'bg-blue-900/40 border-blue-500/50' : 'bg-slate-900/60 border-slate-700';
+                const badgeClass = res.isFolga ? 'bg-blue-500 text-white' : 'bg-slate-700 text-slate-300';
+
+                const itemHtml = `
+                    <div class="p-2.5 rounded-xl border ${bgClass} flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full shrink-0" style="background-color: ${turma.color}"></span>
+                            <span class="text-xs sm:text-sm font-bold text-white">${turma.letra}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-md ${badgeClass}">
+                                ${res.statusText}
+                            </span>
+                            <span class="text-[9px] text-slate-400 block mt-0.5">${res.diaCicloText}</span>
+                        </div>
+                    </div>
+                `;
+                list.insertAdjacentHTML('beforeend', itemHtml);
+            });
+
+            document.getElementById('dayDetailsModal').classList.remove('hidden');
+        }
+
+        function closeDayModal() {
+            document.getElementById('dayDetailsModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
